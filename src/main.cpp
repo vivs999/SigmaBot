@@ -22,24 +22,28 @@ void controlDevices() {
     while (true) {
         Motor1.setVelocity(350, rpm);
         // Control pneumatic with L2 and L1
+        
+        static bool pneumaticState = false;
         if (Controller.ButtonL2.pressing()) {
-            Pneumatic1.set(true); // Push out
-            wait(20, msec);
-        }
-        if (Controller.ButtonL1.pressing()) {
+            if (pneumaticState){
             Pneumatic1.set(false); // Push in
-            wait(20, msec);
+            wait(100, msec);
+            pneumaticState = false;
+        } else if(!pneumaticState){
+            Pneumatic1.set(true);
+            wait(100, msec);
+            pneumaticState = true;
         }
-static bool motorState = false; // Keeps track of the motor state
-        if (Controller.ButtonR2.pressing()) {
+    static bool motorState = false; // Keeps track of the motor state
+    if (Controller.ButtonR2.pressing()) {
     // Check the state of the motor and toggle
-    if (motorState) {
-        Motor1.stop(coast); // Stop the motor and apply brake
-        motorState = false;  // Update state
-    } else {
-        Motor1.spin(forward); // Turn the motor on
-        motorState = true;     // Update state
-    }
+        if (motorState) {
+            Motor1.stop(coast); // Stop the motor and apply brake
+            motorState = false;  // Update state
+        } else {
+            Motor1.spin(forward); // Turn the motor on
+            motorState = true;     // Update state
+        }
     wait (200, msec);
         }
 
